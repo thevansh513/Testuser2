@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
 import requests
+import os
 
 app = Flask(__name__)
 
 API_URL = "https://biggestsmmpanel.com/api/v2"
-API_KEY = "bea95068f04338ffe611bbaf2284a506"   # apna API key
-SERVICE_ID = 4676   # service id
+API_KEY = os.environ.get("API_KEY")  # Render environment variable
+SERVICE_ID = 4676
 
 def order_video(video_link, quantity):
     payload = {
@@ -25,7 +26,7 @@ def place_order():
     quantity = request.args.get("qty")
 
     if not video_link or not quantity:
-        return jsonify({"error": "Missing parameters: use /order?video=https://example.com/xyz&qty=100"}), 400
+        return jsonify({"error": "Missing parameters: use /order?video=<link>&qty=<number>"}), 400
 
     try:
         quantity = int(quantity)
@@ -38,6 +39,3 @@ def place_order():
 @app.route("/")
 def home():
     return "✅ SMM Panel Order Bot is running! Use /order?video=<link>&qty=<number>"
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
